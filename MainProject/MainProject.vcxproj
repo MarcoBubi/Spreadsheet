@@ -76,6 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,6 +88,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,6 +102,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,6 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +127,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Fields\FieldBase.cpp" />
+    <ClCompile Include="src\Fields\EmptyField.cpp" />
+    <ClCompile Include="src\Fields\FieldFactory.cpp" />
+    <ClCompile Include="src\Fields\FormulaField.cpp" />
+    <ClCompile Include="src\Fields\ValueField.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Spreadsheet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Fields\EmptyField.h" />
+    <ClInclude Include="include\Fields\FieldBase.h" />
+    <ClInclude Include="include\Fields\FieldFactory.h" />
+    <ClInclude Include="include\Fields\FormulaField.h" />
+    <ClInclude Include="include\Spreadsheet.h" />
+    <ClInclude Include="include\Fields\ValueField.h" />
+    <ClInclude Include="include\Util\Const.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
