@@ -5,9 +5,12 @@
 class ValueField : public FieldBase
 {
 public:
-	ValueField(const std::string coordinate, const std::string value);
+	ValueField(const std::string value);
 	~ValueField();
 
-private:
+	void PrintValue() override;
+	std::string GetValue() override;
 
+private:
+	std::string _value;
 };

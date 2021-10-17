@@ -2,16 +2,15 @@
 #include <string>
 
 class FieldBase;
+class Spreadsheet;
 
 class FieldFactory
 {
 public:
-	FieldBase* Create(const std::string coordinate, const std::string value) const;
+	FieldBase* Create(const Spreadsheet& spreadSheet, const std::string value) const;
 
 private:
 	FieldFactory() = default;
-
-	const char* _equalSign = "=";
 
 	friend class Spreadsheet;
 };

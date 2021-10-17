@@ -2,12 +2,18 @@
 #include "FieldBase.h"
 #include <string>
 
+class Spreadsheet;
+
 class FormulaField : public FieldBase
 {
 public:
-	FormulaField(const std::string coordinate, const std::string value);
+	FormulaField(const Spreadsheet& spreadSheet, const std::string value);
 	~FormulaField();
 
-private:
+	void PrintValue() override;
+	std::string GetValue() override;
 
+private:
+	const Spreadsheet& _spreadSheet;
+	std::string _value;
 };

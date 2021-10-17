@@ -2,6 +2,7 @@
 
 int main()
 {
-	Spreadsheet spreadsheet(R"(C:\Users\Marco\source\repos\Cetitec\Spreadsheet\MainProject\data\spreadsheet.txt)");
+	Spreadsheet spreadsheet("spreadsheet.txt");
 	spreadsheet.ParseData();
+	spreadsheet.PrintData();
 }

@@ -1,25 +1,29 @@
+#include "Spreadsheet.h"
+#include "Fields/EmptyField.h"
 #include "Fields/FieldFactory.h"
 #include "Fields/FormulaField.h"
 #include "Fields/ValueField.h"
+#include "Util/Const.h"
 #include <cctype>
 #include <stdexcept>
 
-FieldBase* FieldFactory::Create(const std::string coordinate, const std::string value) const
+FieldBase* FieldFactory::Create(const Spreadsheet& spreadSheet, const std::string value) const
 {
-	const char firstElement = value.at(0);
+	if (value.empty())
+	{
+		return new EmptyField(value);
+	}
 
-	if (firstElement == *_equalSign)
+	const char firstElement = value.at(0);
+	if (firstElement == Const::EQUAL_SIGN)
 	{
-		FormulaField* field = new FormulaField(coordinate, value);
-		return field;
+		return new FormulaField(spreadSheet, value);
 	}
-	else if(isdigit(firstElement))
+
+	if(isdigit(firstElement))
 	{
-		ValueField* field = new ValueField(coordinate, value);
-		return field;
+		return new ValueField(value);
 	}
-	else
-	{
-		throw std::invalid_argument("The value given for the FieldFactory is not valid!");
-	}
+
+	throw std::invalid_argument("The value given for the FieldFactory is not valid!");
 }

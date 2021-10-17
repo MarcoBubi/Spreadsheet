@@ -4,47 +4,40 @@
 #include <string>
 #include <vector>
 
-struct Const
+using basicOperation = void (*)(std::string& result, std::string first, std::string second);
+
+namespace Const
 {
-	static std::vector<std::string> SplitStringByDelimiter(std::string str, const char* delimiter)
-	{
-		size_t start;
-		size_t end = 0;
+	void MultiplyStrings(std::string& result,  std::string first, std::string second);
+	void DivideStrings(std::string& result,  std::string first, std::string second);
+	void AddStrings(std::string& result,  std::string first, std::string second);
+	void SubstractStrings(std::string& result,  std::string first, std::string second);
 
-		std::vector<std::string> stringsVector;
+	void CalculateAndMerge(std::vector<std::string>& expressionVector, basicOperation operation);
 
-		while((start = str.find_first_not_of(delimiter, end)) != std::string::npos)
-		{
-			end = str.find(delimiter, start);
-			stringsVector.push_back(str.substr(start, end - start));
-		};
+	void CalculateExpression(std::vector<std::string>& expressionVector);
 
-		return stringsVector;
-	}
+	bool IsNumber(const std::string& str);
 
-	static std::map<int, std::string> SplitStringWithIndex(std::string str, const char* delimiter)
-	{
-		size_t delimiterLength = 0;
-		while (delimiter[delimiterLength] != '\0')
-		{
-			++delimiterLength;
-		}
+	int GetIndexOfDelimiter(std::string str, std::string const delimiters);
 
-		std::map<int, std::string> stringsMap;
-		size_t index = 0;
-		size_t foundAt = 0;
-		while ((foundAt = str.find(delimiter)) != std::string::npos)
-		{
-			stringsMap.insert(std::make_pair(index, str.substr(0, foundAt)));
-			str = str.substr(foundAt + delimiterLength);
-			++index;
-		}
+	std::vector<std::string> SplitStringWithDelimiters(std::string str, const std::string& delimiters);
 
-		if(str.size() > 0)
-		{
-			stringsMap.insert(std::pair<int, std::string>{ index, str });
-		}
+	std::vector<std::string> SplitStringByDelimiter(std::string str, const std::string& delimiter);
 
-		return stringsMap;
-	}
+	std::map<uint64_t, std::string> SplitStringWithIndex(std::string str, const std::string& delimiter);
+
+	const std::string HTAG_NAN_STRING = "#NAN";
+	const std::string HTAG_ERROR_STRING = "#ERROR";
+	const std::string DATA_PATH = "\\data\\";
+	const std::string COLON_SIGN = ":";
+
+	const char MULTIPLICATION_SIGN = '*';
+	const char DIVISION_SIGN = '/';
+	const char ADDITION_SIGN = '+';
+	const char SUBSTRACTION_SIGN = '-';
+
+	const char EQUAL_SIGN = '=';
+	const char INITIAL_COLUMN_LETTER = 'A';
+	const char FINAL_COLUMN_LETTER = 'Z';
 };

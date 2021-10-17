@@ -134,11 +134,13 @@
     <ClCompile Include="src\Fields\ValueField.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Spreadsheet.cpp" />
+    <ClCompile Include="src\Util\Const.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Fields\EmptyField.h" />
     <ClInclude Include="include\Fields\FieldBase.h" />
     <ClInclude Include="include\Fields\FieldFactory.h" />
+    <ClInclude Include="include\Fields\FieldCoordinate.h" />
     <ClInclude Include="include\Fields\FormulaField.h" />
     <ClInclude Include="include\Spreadsheet.h" />
     <ClInclude Include="include\Fields\ValueField.h" />
