@@ -117,23 +117,24 @@ void Spreadsheet::PrintData()
 
 std::string Spreadsheet::CalculateValueForField(std::string value) const
 {
-	const std::string delimiters{ "+-*/" };
-	const char firstNegativeNumber = value[1];
-	std::vector<std::string> fieldsVector = Const::SplitStringWithDelimiters(value.substr(1), delimiters);
-
-	if(firstNegativeNumber == Const::SUBSTRACTION_SIGN)
-	{
-		fieldsVector.at(0) = firstNegativeNumber + fieldsVector.at(0);
-	}
+	std::vector<std::string> fieldsVector = Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
 
 	for (std::string& entry : fieldsVector)
 	{
-		if ((entry.find_first_of(delimiters) != std::string::npos) || Const::IsNumber(entry))
+		bool isDelimiter = entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos && entry.size() == 1;
+		if (isDelimiter || Const::IsNumber(entry))
 		{
 			continue;
 		}
 
 		std::vector<std::string> usedFields;
+		if(entry.at(0) == (Const::SUBSTRACTION_SIGN))
+		{
+			entry = GetValueInternal(entry.substr(1), usedFields);
+			entry = Const::SUBSTRACTION_SIGN + entry;
+			continue;
+		}
+
 		entry = GetValueInternal(entry, usedFields);
 	}
 	CalculateField(fieldsVector);
@@ -150,8 +151,7 @@ std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, st
 	}
 	usedFields.push_back(fieldCoordinate);
 
-	const std::string delimiters{ "+-*/" };
-	std::vector<std::string> fieldsVector = Const::SplitStringWithDelimiters(value.substr(1), delimiters);
+	std::vector<std::string> fieldsVector = Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
 
 	for (std::string& entry : fieldsVector)
 	{
@@ -160,7 +160,7 @@ std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, st
 			return Const::HTAG_NAN_STRING;
 		}
 
-		if ((entry.find_first_of(delimiters) != std::string::npos) || Const::IsNumber(entry))
+		if ((entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos) || Const::IsNumber(entry))
 		{
 			continue;
 		}
