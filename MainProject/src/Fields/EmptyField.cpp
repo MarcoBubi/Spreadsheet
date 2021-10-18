@@ -2,15 +2,8 @@
 #include <iostream>
 
 EmptyField::EmptyField(const std::string value)
-	: FieldBase()
-	, _value{ value }
+	: _value{ value }
 {
-
-}
-
-EmptyField::~EmptyField()
-{
-
 }
 
 void EmptyField::PrintValue()

@@ -7,7 +7,7 @@
 #include <cctype>
 #include <stdexcept>
 
-FieldBase* FieldFactory::Create(const Spreadsheet& spreadSheet, const std::string value) const
+IField* FieldFactory::Create(const Spreadsheet& spreadSheet, const std::string value) const
 {
 	if (value.empty())
 	{
@@ -20,7 +20,7 @@ FieldBase* FieldFactory::Create(const Spreadsheet& spreadSheet, const std::strin
 		return new FormulaField(spreadSheet, value);
 	}
 
-	if(isdigit(firstElement))
+	if (isdigit(firstElement))
 	{
 		return new ValueField(value);
 	}

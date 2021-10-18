@@ -2,14 +2,8 @@
 #include <iostream>
 
 ValueField::ValueField(const std::string value)
-	: FieldBase()
-	, _value { value }
+	: _value{ value }
 {
-}
-
-ValueField::~ValueField()
-{
-
 }
 
 void ValueField::PrintValue()

@@ -1,19 +1,22 @@
 #pragma once
-#include "FieldBase.h"
+#include "IField.h"
 #include <string>
 
 class Spreadsheet;
 
-class FormulaField : public FieldBase
+class FormulaField : public IField
 {
 public:
+	FormulaField() = delete;
 	FormulaField(const Spreadsheet& spreadSheet, const std::string value);
-	~FormulaField();
+	~FormulaField() = default;
+	FormulaField(const FormulaField& other) = delete;
+	FormulaField& operator=(const FormulaField& other) = delete;
 
 	void PrintValue() override;
 	std::string GetValue() override;
 
 private:
 	const Spreadsheet& _spreadSheet;
-	std::string _value;
+	const std::string _value;
 };

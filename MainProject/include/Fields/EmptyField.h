@@ -1,16 +1,19 @@
 #pragma once
-#include "FieldBase.h"
+#include "IField.h"
 #include <string>
 
-class EmptyField : public FieldBase
+class EmptyField : public IField
 {
 public:
-	EmptyField(const std::string value);
-	~EmptyField();
+	EmptyField() = delete;
+	explicit EmptyField(const std::string value);
+	~EmptyField() = default;
+	EmptyField(const EmptyField& other) = delete;
+	EmptyField& operator=(const EmptyField& other) = delete;
 
 	void PrintValue() override;
 	std::string GetValue() override;
 
 private:
-	std::string _value;
+	const std::string _value;
 };

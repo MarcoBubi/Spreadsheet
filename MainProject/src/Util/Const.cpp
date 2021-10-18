@@ -6,13 +6,13 @@ namespace Const
 	void MultiplyStrings(std::string& result, std::string first, std::string second)
 	{
 		bool isProductNegative = false;
-		if(first[0] == '-')
+		if (first[0] == '-')
 		{
 			first = first.substr(1);
 			isProductNegative = !isProductNegative;
 		}
 
-		if(second[0] == '-')
+		if (second[0] == '-')
 		{
 			second = second.substr(1);
 			isProductNegative = !isProductNegative;
@@ -36,7 +36,7 @@ namespace Const
 			}
 		}
 
-		for (char & i : product)
+		for (char& i : product)
 		{
 			i += '0';
 		}
@@ -46,7 +46,7 @@ namespace Const
 			product = product.substr(1);
 		}
 
-		if(isProductNegative)
+		if (isProductNegative)
 		{
 			product = "-" + product;
 		}
@@ -61,13 +61,13 @@ namespace Const
 
 	void AddStrings(std::string& result, std::string first, std::string second)
 	{
-		if(first.size() < second.size())
+		if (first.size() < second.size())
 		{
 			swap(first, second);
 		}
 
 		int j = first.size() - 1;
-		for(int i = second.size() - 1; i >= 0; --i, --j)
+		for (int i = second.size() - 1; i >= 0; --i, --j)
 		{
 			first[j] += (second[i] - '0');
 		}
@@ -111,7 +111,7 @@ namespace Const
 		int carry = 0;
 		for (int i = 0; i < secondSize; i++)
 		{
-			int sub	= (first[i] - '0') - (second[i] - '0') - carry;
+			int sub = (first[i] - '0') - (second[i] - '0') - carry;
 
 			if (sub < 0)
 			{
@@ -148,64 +148,64 @@ namespace Const
 		result = substraction;
 	}
 
-	void CalculateAndMerge(std::vector<std::string>& expressionVector, unsigned int targetIndex, basicOperation operation)
+	void CalculateAndMerge(StringsVector& expression, unsigned int index, BasicOperation operation)
 	{
-		const unsigned int previousIndex = targetIndex - 1;
-		const unsigned int nextIndex = targetIndex + 1;
+		const unsigned int pIndex = index - 1;
+		const unsigned int nIndex = index + 1;
 
-		operation(expressionVector.at(previousIndex), expressionVector.at(previousIndex), expressionVector.at(nextIndex));
-		expressionVector.erase(expressionVector.begin() + nextIndex);
-		expressionVector.erase(expressionVector.begin() + targetIndex);
+		operation(expression.at(pIndex), expression.at(pIndex), expression.at(nIndex));
+		expression.erase(expression.begin() + nIndex);
+		expression.erase(expression.begin() + index);
 	}
 
-	void CalculateExpression(std::vector<std::string>& expressionVector)
+	void CalculateExpression(StringsVector& expression)
 	{
-		if(expressionVector.size() == 1)
+		if (expression.size() == 1)
 		{
 			return;
 		}
 
-		// priority iteration: * and /
-		const std::vector<std::string> firstPriorityDels { "/", "*" };
-		const std::vector<std::string> secondPriorityDels { "+", "-" };
+		const StringsVector prioDels{ "/", "*" };
+		const StringsVector dels{ "+", "-" };
 
-		auto result = std::find_first_of(expressionVector.begin(), expressionVector.end(), firstPriorityDels.begin(), firstPriorityDels.end());
-		if (result != expressionVector.end())
+		auto result = std::find_first_of(
+			expression.begin(), expression.end(), prioDels.begin(), prioDels.end());
+		if (result != expression.end())
 		{
-			const unsigned int foundAt = std::distance(expressionVector.begin(), result);
+			const unsigned int foundAt = std::distance(expression.begin(), result);
 
-			const char operation = expressionVector.at(foundAt)[0];
-			if(operation == Const::MULTIPLICATION_SIGN)
+			const char operation = expression.at(foundAt)[0];
+			if (operation == Const::MULTIPLICATION_SIGN)
 			{
-				CalculateAndMerge(expressionVector, foundAt, MultiplyStrings);
-				CalculateExpression(expressionVector);
+				CalculateAndMerge(expression, foundAt, MultiplyStrings);
+				CalculateExpression(expression);
 				return;
 			}
 
 			if (operation == Const::DIVISION_SIGN)
 			{
-				CalculateAndMerge(expressionVector, foundAt, DivideStrings);
-				CalculateExpression(expressionVector);
+				CalculateAndMerge(expression, foundAt, DivideStrings);
+				CalculateExpression(expression);
 				return;
 			}
 		}
 
-		result = std::find_first_of(expressionVector.begin(), expressionVector.end(), secondPriorityDels.begin(), secondPriorityDels.end());
-		if (result != expressionVector.end())
+		result = std::find_first_of(expression.begin(), expression.end(), dels.begin(), dels.end());
+		if (result != expression.end())
 		{
-			const unsigned int foundAt = std::distance(expressionVector.begin(), result);
-			const char operation = expressionVector.at(foundAt)[0];
+			const unsigned int foundAt = std::distance(expression.begin(), result);
+			const char operation = expression.at(foundAt)[0];
 			if (operation == Const::ADDITION_SIGN)
 			{
-				CalculateAndMerge(expressionVector, foundAt, AddStrings);
-				CalculateExpression(expressionVector);
+				CalculateAndMerge(expression, foundAt, AddStrings);
+				CalculateExpression(expression);
 				return;
 			}
 
 			if (operation == Const::SUBSTRACTION_SIGN)
 			{
-				CalculateAndMerge(expressionVector, foundAt, SubstractStrings);
-				CalculateExpression(expressionVector);
+				CalculateAndMerge(expression, foundAt, SubstractStrings);
+				CalculateExpression(expression);
 				return;
 			}
 		}
@@ -213,9 +213,10 @@ namespace Const
 
 	bool IsNumber(const std::string& str)
 	{
-		for(char const& c : str)
+		for (char const& c : str)
 		{
-			if (isdigit(c) == 0) return false;
+			if (isdigit(c) == 0)
+				return false;
 		}
 
 		return true;
@@ -252,35 +253,25 @@ namespace Const
 		return false;
 	}
 
-	int GetIndexOfDelimiter(std::string str, std::string const delimiters)
-	{
-		size_t beg, pos = 0;
-		while ((beg = str.find_first_not_of(delimiters, pos)) != std::string::npos)
-		{
-			return str.find_first_of(delimiters, beg + 1);
-		}
-
-		return -1;
-	}
-
-	std::vector<std::string> SplitStringExpression(std::string str, const std::string& delimiters)
+	StringsVector SplitStringExpression(std::string str, const std::string& delimiters)
 	{
 		std::vector<std::string> stringsVector;
 		size_t beg, next = 0;
 		std::string dataString;
 		while ((beg = str.find_first_of(delimiters, next)) != std::string::npos)
 		{
-			if(beg == next)
+			if (beg == next)
 			{
 				dataString = str.substr(beg, 1);
 				if (str[beg] == Const::SUBSTRACTION_SIGN)
 				{
-					if(!stringsVector.empty())
+					if (!stringsVector.empty())
 					{
 						std::string lastAddedElement = stringsVector.back();
-						bool hasDelimiter = lastAddedElement.find_first_of(delimiters) != std::string::npos;
+						bool hasDelimiter
+							= lastAddedElement.find_first_of(delimiters) != std::string::npos;
 
-						if(hasDelimiter && lastAddedElement.size() == 1)
+						if (hasDelimiter && lastAddedElement.size() == 1)
 						{
 							next = str.find_first_of(delimiters, 1);
 
@@ -322,38 +313,6 @@ namespace Const
 		{
 			stringsVector.push_back(str.substr(0));
 		}
-
-		return stringsVector;
-	}
-
-	std::vector<std::string> SplitStringWithDelimiters(std::string str, const std::string& delimiters)
-	{
-		std::vector<std::string> stringsVector;
-		size_t beg, pos = 0;
-		while ((beg = str.find_first_not_of(delimiters, pos)) != std::string::npos)
-		{
-			pos = str.find_first_of(delimiters, beg + 1);
-			stringsVector.push_back(str.substr(beg, pos - beg));
-			if(pos != std::string::npos)
-			{
-				stringsVector.emplace_back(1, str.at(pos));
-			}
-		}
-		return stringsVector;
-	}
-
-	std::vector<std::string> SplitStringByDelimiter(std::string str, const std::string& delimiter)
-	{
-		size_t start;
-		size_t end = 0;
-
-		std::vector<std::string> stringsVector;
-
-		while ((start = str.find_first_not_of(delimiter, end)) != std::string::npos)
-		{
-			end = str.find(delimiter, start);
-			stringsVector.push_back(str.substr(start, end - start));
-		};
 
 		return stringsVector;
 	}

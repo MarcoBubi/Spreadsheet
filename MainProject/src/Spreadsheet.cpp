@@ -1,4 +1,4 @@
-#include "Fields/FieldBase.h"
+#include "Fields/IField.h"
 #include "Fields/FieldCoordinate.h"
 #include "Spreadsheet.h"
 #include "Util/Const.h"
@@ -15,47 +15,18 @@ Spreadsheet::Spreadsheet(const std::string path)
 {
 }
 
-Spreadsheet::Spreadsheet(const Spreadsheet& other)
-	: _path { other._path }
-	, _fieldsMap { other._fieldsMap }
-	, _fieldFactory { other._fieldFactory }
-{
-}
-
-Spreadsheet::Spreadsheet(Spreadsheet&& other)
-	: _path{ other._path }
-	, _fieldsMap{ other._fieldsMap }
-	, _fieldFactory { other._fieldFactory }
-{
-}
-
 Spreadsheet::~Spreadsheet()
 {
-	//TODO: dealocate map etc.
+	FieldMap::iterator it;
+	for (it = _fieldsMap.begin(); it != _fieldsMap.end(); ++it)
+	{
+		delete it->second;
+	}
 }
 
-Spreadsheet& Spreadsheet::operator=(const Spreadsheet& other)
+IField* Spreadsheet::operator[](const std::string& coordinate) const
 {
-	_path = other._path;
-	_fieldsMap = other._fieldsMap;
-	_fieldFactory = other._fieldFactory;
-
-	return *this;
-}
-
-Spreadsheet& Spreadsheet::operator=(Spreadsheet&& other)
-{
-	_path = other._path;
-	_fieldsMap = other._fieldsMap;
-	_fieldFactory = other._fieldFactory;
-
-	return *this;
-}
-
-
-FieldBase* Spreadsheet::operator[](const std::string& coordinate) const
-{
-	std::map<FieldCoordinate, FieldBase*>::const_iterator it;
+	FieldMap::const_iterator it;
 	for (it = _fieldsMap.cbegin(); it != _fieldsMap.cend(); ++it)
 	{
 		if (it->first.coordinate == coordinate)
@@ -73,22 +44,25 @@ void Spreadsheet::ParseData()
 	_getcwd(workingDirectory, 256);
 
 	std::ifstream file(workingDirectory + Const::DATA_PATH + _path);
-	std::string column;
-	column = Const::INITIAL_COLUMN_LETTER;
-	uint64_t index = 1;
 
-	if(file.is_open() && file.good())
+
+	if (file.is_open() && file.good())
 	{
-		for(std::string line; std::getline(file, line);)
+		std::string column;
+		column = Const::INITIAL_COLUMN_LETTER;
+		uint64_t index = 1;
+
+		for (std::string line; std::getline(file, line);)
 		{
-			// pair - index, value
-			std::map<uint64_t, std::string> stringsMap = Const::SplitStringWithIndex(line, _defaultTabulator);
+			std::map<uint64_t, std::string> stringsMap
+				= Const::SplitStringWithIndex(line, Const::DEFAULT_TABULATOR);
 
 			for (auto& entry : stringsMap)
 			{
-				FieldCoordinate coordinate{ column, index, column + std::to_string(index) }; // refactor!
+				FieldCoordinate coordinate{ column, index, column + std::to_string(index) };
 
-				_fieldsMap.insert(std::make_pair(coordinate, _fieldFactory.Create(*this, entry.second)));
+				_fieldsMap.insert(
+					std::make_pair(coordinate, _fieldFactory.Create(*this, entry.second)));
 				IncrementColumn(column);
 			}
 			++index;
@@ -99,36 +73,33 @@ void Spreadsheet::ParseData()
 	file.close();
 }
 
-void Spreadsheet::PrintData()
+std::string Spreadsheet::GetValueForField(const std::string& fieldCoordinate) const
 {
-	uint64_t currentRow = 1;
-	std::map<FieldCoordinate, FieldBase*>::iterator it;
-	for (it = _fieldsMap.begin(); it != _fieldsMap.end(); ++it)
+	IField* field = (*this)[fieldCoordinate];
+	if (field == nullptr)
 	{
-		if(currentRow < it->first.row)
-		{
-			std::cout << std::endl;
-			currentRow++;
-		}
-		it->second->PrintValue();
-		std::cout << "\t";
+		return Const::HTAG_NAN_STRING;
 	}
+
+	return field->GetValue();
 }
 
 std::string Spreadsheet::CalculateValueForField(std::string value) const
 {
-	std::vector<std::string> fieldsVector = Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
+	std::vector<std::string> fieldsVector
+		= Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
 
 	for (std::string& entry : fieldsVector)
 	{
-		bool isDelimiter = entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos && entry.size() == 1;
+		bool isDelimiter
+			= entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos && entry.size() == 1;
 		if (isDelimiter || Const::IsNumber(entry))
 		{
 			continue;
 		}
 
 		std::vector<std::string> usedFields;
-		if(entry.at(0) == (Const::SUBSTRACTION_SIGN))
+		if (entry.at(0) == (Const::SUBSTRACTION_SIGN))
 		{
 			entry = GetValueInternal(entry.substr(1), usedFields);
 			entry = Const::SUBSTRACTION_SIGN + entry;
@@ -142,16 +113,18 @@ std::string Spreadsheet::CalculateValueForField(std::string value) const
 	return fieldsVector[0];
 }
 
-std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, std::vector<std::string>& usedFields) const
+std::string Spreadsheet::GetValueInternal(
+	const std::string& fieldCoordinate, std::vector<std::string>& usedFields) const
 {
 	std::string value = GetValueForField(fieldCoordinate);
-	if(!IsFormula(fieldCoordinate))
+	if (!IsFormula(fieldCoordinate))
 	{
 		return value;
 	}
 	usedFields.push_back(fieldCoordinate);
 
-	std::vector<std::string> fieldsVector = Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
+	std::vector<std::string> fieldsVector
+		= Const::SplitStringExpression(value.substr(1), Const::BASIC_OPERATORS);
 
 	for (std::string& entry : fieldsVector)
 	{
@@ -160,7 +133,8 @@ std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, st
 			return Const::HTAG_NAN_STRING;
 		}
 
-		if ((entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos) || Const::IsNumber(entry))
+		if ((entry.find_first_of(Const::BASIC_OPERATORS) != std::string::npos)
+			|| Const::IsNumber(entry))
 		{
 			continue;
 		}
@@ -180,7 +154,7 @@ std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, st
 			return entry;
 		}
 
-		if(entry == Const::HTAG_NAN_STRING)
+		if (entry == Const::HTAG_NAN_STRING)
 		{
 			return entry;
 		}
@@ -189,17 +163,6 @@ std::string Spreadsheet::GetValueInternal(const std::string& fieldCoordinate, st
 	CalculateField(fieldsVector);
 
 	return fieldsVector[0];
-}
-
-std::string Spreadsheet::GetValueForField(const std::string& fieldCoordinate) const
-{
-	FieldBase* field = (*this)[fieldCoordinate];
-	if(field == nullptr)
-	{
-		return Const::HTAG_NAN_STRING;
-	}
-
-	return field->GetValue();
 }
 
 void Spreadsheet::CalculateField(std::vector<std::string>& expression) const
@@ -212,7 +175,7 @@ void Spreadsheet::CalculateField(std::vector<std::string>& expression) const
 			return;
 		}
 
-		if(entry == Const::HTAG_NAN_STRING || entry.empty())
+		if (entry == Const::HTAG_NAN_STRING || entry.empty())
 		{
 			expression[0] = Const::HTAG_NAN_STRING;
 			return;
@@ -222,36 +185,16 @@ void Spreadsheet::CalculateField(std::vector<std::string>& expression) const
 	Const::CalculateExpression(expression);
 }
 
-bool Spreadsheet::IsFormula(const std::string& coordinate) const
-{
-	std::map<FieldCoordinate, FieldBase*>::const_iterator it;
-	for (it = _fieldsMap.cbegin(); it != _fieldsMap.cend(); ++it)
-	{
-		if(it->first.coordinate == coordinate)
-		{
-			std::string value = it->second->GetValue();
-
-			if(value != "")
-			{
-				return value.at(0) == Const::EQUAL_SIGN;
-			}
-
-		}
-	}
-
-	return false;
-}
-
 void Spreadsheet::IncrementColumn(std::string& column, int incrementValue)
 {
-	if(column.empty())
+	if (column.empty())
 	{
 		return;
 	}
 
 	size_t index = column.length() - 1;
 	size_t columnValue = column.at(index);
-	if(columnValue >= Const::FINAL_COLUMN_LETTER)
+	if (columnValue >= Const::FINAL_COLUMN_LETTER)
 	{
 		column.at(index) = Const::INITIAL_COLUMN_LETTER;
 		column += Const::INITIAL_COLUMN_LETTER;
@@ -259,4 +202,41 @@ void Spreadsheet::IncrementColumn(std::string& column, int incrementValue)
 	}
 
 	column.at(index) += incrementValue;
+}
+
+bool Spreadsheet::IsFormula(const std::string& coordinate) const
+{
+	FieldMap::const_iterator it;
+	for (it = _fieldsMap.cbegin(); it != _fieldsMap.cend(); ++it)
+	{
+		if (it->first.coordinate == coordinate)
+		{
+			std::string value = it->second->GetValue();
+
+			if (!value.empty())
+			{
+				return value.at(0) == Const::EQUAL_SIGN;
+			}
+		}
+	}
+
+	return false;
+}
+
+std::ostream& operator<<(std::ostream& os, const Spreadsheet& spreadsheet)
+{
+	uint64_t currentRow = 1;
+	FieldMap::const_iterator it;
+	for (it = spreadsheet._fieldsMap.cbegin(); it != spreadsheet._fieldsMap.cend(); ++it)
+	{
+		if (currentRow < it->first.row)
+		{
+			std::cout << std::endl;
+			currentRow++;
+		}
+		it->second->PrintValue();
+		std::cout << "\t";
+	}
+
+	return os;
 }

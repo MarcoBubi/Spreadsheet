@@ -5,16 +5,9 @@
 #include <string>
 
 FormulaField::FormulaField(const Spreadsheet& spreadSheet, const std::string value)
-	: FieldBase()
-	, _spreadSheet { spreadSheet }
-	, _value { value }
+	: _spreadSheet{ spreadSheet }
+	, _value{ value }
 {
-
-}
-
-FormulaField::~FormulaField()
-{
-
 }
 
 void FormulaField::PrintValue()
@@ -27,4 +20,3 @@ std::string FormulaField::GetValue()
 {
 	return _value;
 }
-

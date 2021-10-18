@@ -4,26 +4,23 @@
 #include <string>
 #include <vector>
 
-using basicOperation = void (*)(std::string& result, std::string first, std::string second);
+using BasicOperation = void (*)(std::string& result, std::string first, std::string second);
+using StringsVector = std::vector<std::string>;
 
 namespace Const
 {
-	void MultiplyStrings(std::string& result,  std::string first, std::string second);
-	void DivideStrings(std::string& result,  std::string first, std::string second);
-	void AddStrings(std::string& result,  std::string first, std::string second);
-	void SubstractStrings(std::string& result,  std::string first, std::string second);
+	void MultiplyStrings(std::string& result, std::string first, std::string second);
+	void DivideStrings(std::string& result, std::string first, std::string second);
+	void AddStrings(std::string& result, std::string first, std::string second);
+	void SubstractStrings(std::string& result, std::string first, std::string second);
 
-	void CalculateAndMerge(std::vector<std::string>& expressionVector, unsigned int targetIndex, basicOperation operation);
-	void CalculateExpression(std::vector<std::string>& expressionVector);
+	void CalculateAndMerge(StringsVector& expression, unsigned int index, BasicOperation operation);
+	void CalculateExpression(StringsVector& expression);
 
 	bool IsNumber(const std::string& str);
 	bool IsSmaller(const std::string& first, const std::string& second);
 
-	int GetIndexOfDelimiter(std::string str, std::string const delimiters);
-
-	std::vector<std::string> SplitStringExpression(std::string str, const std::string& delimiters);
-	std::vector<std::string> SplitStringWithDelimiters(std::string str, const std::string& delimiters);
-	std::vector<std::string> SplitStringByDelimiter(std::string str, const std::string& delimiter);
+	StringsVector SplitStringExpression(std::string str, const std::string& delimiters);
 	std::map<uint64_t, std::string> SplitStringWithIndex(std::string str, const std::string& delimiter);
 
 	const std::string HTAG_NAN_STRING = "#NAN";
@@ -31,6 +28,8 @@ namespace Const
 	const std::string DATA_PATH = "\\data\\";
 	const std::string COLON_SIGN = ":";
 	const std::string BASIC_OPERATORS{ "*/+-" };
+	const std::string DEFAULT_TABULATOR = "\t";
+	const std::string DEFAULT_NEWLINE = "\n";
 
 	const char MULTIPLICATION_SIGN = '*';
 	const char DIVISION_SIGN = '/';

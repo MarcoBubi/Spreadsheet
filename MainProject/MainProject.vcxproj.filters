@@ -24,9 +24,6 @@
     <ClCompile Include="src\Fields\EmptyField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Fields\FieldBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Fields\FieldFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -44,7 +41,7 @@
     <ClInclude Include="include\Spreadsheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Fields\FieldBase.h">
+    <ClInclude Include="include\Fields\IField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Fields\FieldFactory.h">

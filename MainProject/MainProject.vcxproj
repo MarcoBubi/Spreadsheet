@@ -127,7 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Fields\FieldBase.cpp" />
     <ClCompile Include="src\Fields\EmptyField.cpp" />
     <ClCompile Include="src\Fields\FieldFactory.cpp" />
     <ClCompile Include="src\Fields\FormulaField.cpp" />
@@ -138,7 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Fields\EmptyField.h" />
-    <ClInclude Include="include\Fields\FieldBase.h" />
+    <ClInclude Include="include\Fields\IField.h" />
     <ClInclude Include="include\Fields\FieldFactory.h" />
     <ClInclude Include="include\Fields\FieldCoordinate.h" />
     <ClInclude Include="include\Fields\FormulaField.h" />
