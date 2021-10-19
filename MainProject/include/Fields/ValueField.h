@@ -8,11 +8,12 @@ public:
 	ValueField() = delete;
 	explicit ValueField(const std::string value);
 	~ValueField() = default;
-	ValueField(const ValueField& other) = delete;
-	ValueField& operator=(const ValueField& other) = delete;
+	ValueField(const ValueField& other) = default;
+	ValueField& operator=(const ValueField& other) = default;
 
 	void PrintValue() override;
 	std::string GetValue() override;
+	IField* Clone() override;
 
 private:
 	const std::string _value;

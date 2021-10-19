@@ -14,8 +14,8 @@ public:
 	Spreadsheet() = delete;
 	explicit Spreadsheet(const std::string path);
 	~Spreadsheet();
-	Spreadsheet(const Spreadsheet& other) = delete;
-	Spreadsheet(Spreadsheet&& other) = delete;
+	Spreadsheet(const Spreadsheet& other);
+	Spreadsheet(Spreadsheet&& other) noexcept;
 	Spreadsheet& operator=(const Spreadsheet& other) = delete;
 	Spreadsheet& operator=(Spreadsheet&& other) = delete;
 
@@ -37,7 +37,7 @@ private:
 
 	bool IsFormula(const std::string& coordinate) const;
 
-	const std::string _path;
-	const FieldFactory _fieldFactory;
+	std::string _path;
+	FieldFactory _fieldFactory;
 	FieldMap _fieldsMap;
 };

@@ -11,4 +11,5 @@ public:
 
 	virtual void PrintValue() = 0;
 	virtual std::string GetValue() = 0;
+	virtual IField* Clone() = 0;
 };

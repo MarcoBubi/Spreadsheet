@@ -15,3 +15,8 @@ std::string ValueField::GetValue()
 {
 	return _value;
 }
+
+IField* ValueField::Clone()
+{
+	return new ValueField(*this);
+}

@@ -20,3 +20,8 @@ std::string FormulaField::GetValue()
 {
 	return _value;
 }
+
+IField* FormulaField::Clone()
+{
+	return new FormulaField(*this);
+}

@@ -17,11 +17,45 @@ Spreadsheet::Spreadsheet(const std::string path)
 
 Spreadsheet::~Spreadsheet()
 {
+	if (_fieldsMap.empty())
+	{
+		return;
+	}
+
 	FieldMap::iterator it;
 	for (it = _fieldsMap.begin(); it != _fieldsMap.end(); ++it)
 	{
-		delete it->second;
+		if (it->second != nullptr)
+		{
+			delete it->second;
+		}
 	}
+
+	_fieldsMap.clear();
+}
+
+Spreadsheet::Spreadsheet(const Spreadsheet& other)
+	: _path { other._path}
+	, _fieldFactory { other._fieldFactory}
+{
+	FieldMap::const_iterator it;
+	for (it = other._fieldsMap.cbegin(); it != other._fieldsMap.cend(); ++it)
+	{
+		_fieldsMap[it->first] = it->second->Clone();
+	}
+}
+
+Spreadsheet::Spreadsheet(Spreadsheet&& other) noexcept
+	: _path { std::move(other._path) }
+	, _fieldFactory { std::move(other._fieldFactory) }
+{
+	FieldMap::iterator it;
+	for (it = other._fieldsMap.begin(); it != other._fieldsMap.end(); ++it)
+	{
+		_fieldsMap[it->first] = std::move(it->second);
+		it->second = nullptr;
+	}
+	other._fieldsMap.clear();
 }
 
 IField* Spreadsheet::operator[](const std::string& coordinate) const

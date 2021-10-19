@@ -15,3 +15,8 @@ std::string EmptyField::GetValue()
 {
 	return _value;
 }
+
+IField* EmptyField::Clone()
+{
+	return new EmptyField(*this);
+}
